@@ -9,6 +9,7 @@ import os
 import json
 import re
 import util
+import sys
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 from tokenizer import Tokenizer
@@ -21,7 +22,7 @@ class Parser:
         self.book_file = book_file
         pass
 
-    def preprocess(self):
+    def preprocess(self, key_from, key_to):
         '''
         Generate sanitized text files for each document. Ignore invalid files.
         For each document, the text files for Title, Anchor and Body are generated
@@ -30,6 +31,8 @@ class Parser:
             book_data = json.load(f)
         for key, url in book_data.items():
             upper, lower = key.split('/')  # e.g. '0/1'
+            if int(upper) > int(key_to) or int(upper) < int(key_from):
+                continue
             if not util.is_valid(url) or os.path.exists(os.path.join(self.output_dir, upper, lower + '.body')):
                 print(key, 'invalid')
                 continue
@@ -80,5 +83,8 @@ class Parser:
 
 
 if __name__ == '__main__':
-    parser = Parser('C:\\Users\\Jun-Wei\\Desktop\\webpages_raw', 'C:\\Users\\Jun-Wei\\Desktop\\webpages_parsed', 'bookkeeping.json')
-    parser.preprocess()
+    #parser = Parser('C:\\Users\\Jun-Wei\\Desktop\\webpages_raw', 'C:\\Users\\Jun-Wei\\Desktop\\webpages_parsed', 'bookkeeping.json')
+    parser = Parser('/home/junwel1/ir-proj3-data/WEBPAGES_RAW', '/home/junwel1/ir-proj3-data/webpages_parsed', 'bookkeeping.json')
+    key_from = sys.argv[1]
+    key_to = sys.argv[2]
+    parser.preprocess(key_from, key_to)
