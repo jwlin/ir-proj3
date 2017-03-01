@@ -49,7 +49,7 @@ def is_valid(url):
                             + "|wav|avi|mov|mpeg|ram|m4v|mkv|ogg|ogv|pdf|ppsx" \
                             + "|ps|eps|tex|ppt|pptx|doc|docx|xls|xlsx|names|data|dat|exe|bz2|tar|msi|bin|7z|psd|dmg|iso|epub|dll|cnf|tgz|sha1" \
                             + "|thmx|mso|arff|rtf|jar|csv|txt|py|lif|h5|ply|bed|flv" \
-                            + "|rm|smil|wmv|swf|wma|zip|rar|gz|txt|java|c|cc|cpp|m|out)$", url.lower()):
+                            + "|rm|smil|wmv|swf|wma|zip|rar|gz|txt|java|c|cc|cpp|m|out|edelsbrunner)$", url.lower()):
             return False
     except TypeError:
         print("TypeError for ", url)
@@ -115,46 +115,3 @@ def is_not_trap(url, trapCheckTable={}):
         print 'trapCheckTable inside', trapCheckTable
     return True
 '''
-
-def save_data(fname, trapCheckTable, subDomainCount, invalid_links, max_out_link, trap_links, processed_urls, black_lists):
-    with open(fname, 'w') as f:
-        data = {}
-        data['trapCheckTable'] = {}
-        for k, v in trapCheckTable.items():
-            data['trapCheckTable'][k] = []
-            for v_set in v:
-                data['trapCheckTable'][k].append(list(v_set))
-        data['Sub Domain Count'] = subDomainCount
-        data['Number of Invalid Links'] = len(invalid_links)
-        data['URL with Max Out Links'] = max_out_link
-        data['Invalid Links'] = invalid_links
-        data['Trap Links'] = list(trap_links)
-        data['Processed URLs'] = list(processed_urls)
-        data['Black List'] = black_lists
-        json.dump(data, f, indent=2, sort_keys=True, ensure_ascii=True)
-
-
-def load_data(fname):
-    trapCheckTable = {}  # for checking the trap in is_valid()
-    subDomainCount = {}  # for counting the number of subdomain
-    invalid_links = []
-    trap_links = set()
-    max_out_link = ['URL', 0]
-    processed_urls = set()
-    black_lists = []
-    if os.path.exists(fname):
-        copyfile(fname, fname + '.bk')
-        with open(fname, 'r') as f:
-            data = json.load(f)
-            for k, v in data['trapCheckTable'].items():
-                trapCheckTable[k] = []
-                for v_list in v:
-                    trapCheckTable[k].append(set(v_list))
-            for k, v in data['Sub Domain Count'].items():
-                subDomainCount[k] = int(v)
-            invalid_links = data['Invalid Links']
-            trap_links = set(data['Trap Links'])
-            max_out_link = data['URL with Max Out Links']
-            processed_urls = set(data['Processed URLs'])
-            black_lists = data['Black List']
-    return trapCheckTable, subDomainCount, invalid_links, trap_links, max_out_link, processed_urls, black_lists

@@ -7,10 +7,8 @@ Module docstring
 
 import os
 import json
-import re
 import util
 import sys
-from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 from tokenizer import Tokenizer
 
@@ -20,7 +18,6 @@ class Parser:
         self.base_dir = base_dir
         self.output_dir = output_dir
         self.book_file = book_file
-        pass
 
     def preprocess(self, key_from, key_to):
         '''
@@ -40,29 +37,29 @@ class Parser:
             with open(os.path.join(self.base_dir, upper, lower), 'r', encoding='utf8') as f:
                 soup = BeautifulSoup(f.read(), 'html5lib')
                 if soup.title:
-                    print('-- title --')
+                    #print('-- title --')
                     tokens = Tokenizer.tokenize(soup.title.text)
-                    print(soup.title, tokens)
+                    #print(soup.title, tokens)
                     self.save_text(os.path.join(self.output_dir, upper, lower + '.title'), tokens)
                 if soup.find_all('a'):
-                    print('-- a --')
+                    #print('-- a --')
                     token_data = Tokenizer.tokenize_link(url, soup.find_all('a'))
                     self.save_json(os.path.join(self.output_dir, upper, lower + '.link.json'), token_data)
                 if soup.body:
-                    print('-- body --')
+                    #print('-- body --')
                     print(soup.body)
                     txt = ' '.join([s for s in soup.body.stripped_strings])
-                    print(txt)
-                    print('---')
+                    #print(txt)
+                    #print('---')
                     for script in soup.body.find_all('script'):
                         fragment = ' '.join([s for s in script.stripped_strings])
                         txt = txt.replace(fragment, '')
                     for style in soup.body.find_all('style'):
                         fragment = ' '.join([s for s in style.stripped_strings])
                         txt = txt.replace(fragment, '')
-                    print(txt)
+                    #print(txt)
                     tokens = Tokenizer.tokenize(txt)
-                    print('tokens:', tokens)
+                    #print('tokens:', tokens)
                     self.save_text(os.path.join(self.output_dir, upper, lower + '.body'), tokens)
             #input()
 
@@ -73,13 +70,6 @@ class Parser:
     def save_json(self, fname, data):
         with open(fname, 'w', encoding='utf8') as f:
             json.dump(data, f, indent=2, sort_keys=True, ensure_ascii=True)
-
-
-    def generate_tokens(self):
-        pass
-
-    def merge_tokens(self, token):
-        pass
 
 
 if __name__ == '__main__':
