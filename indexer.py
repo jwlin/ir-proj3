@@ -8,6 +8,7 @@ Module docstring
 
 import json
 import os
+import sys
 from gensim import corpora, models, similarities
 import util
 
@@ -24,7 +25,7 @@ class Indexer:
         self.dict = None
         self.id2token = {}
         self.index = {}
-
+        
         with open(os.path.join(self.book_file), 'r', encoding='utf8') as f:
             self.book_data = json.load(f)
         if os.path.exists(os.path.join(self.output_dir, index_type + '_index_to_key.json')):
@@ -94,7 +95,7 @@ class Indexer:
             corpora.MmCorpus.serialize(os.path.join(self.output_dir, fname), tfidf_docs)
             return tfidf_docs
 
-    def build_index(self):
+    def build_index(self, id_from, id_to):
         print('loading doc')
         if self.index_to_key:  # corpus and dicts are built before
             self.load_doc_with_index()
@@ -105,6 +106,8 @@ class Indexer:
         print('indexing')
         token2id = self.dict.token2id
         for doc_id in range(len(self.docs)):
+            if doc_id < int(id_from) or doc_id > int(id_to):
+                continue
             print(doc_id)
             # first pass for positions
             word_id_to_positions = {}
@@ -146,12 +149,30 @@ class Indexer:
                         ))
         for wid in self.index.keys():
             self.index[wid]['doc_length'] = str(len(self.index[wid]['postings']))
-        self.save_json(self.index, self.index_type + '.index.json')
+        self.save_json(self.index, self.index_type + '.' + str(id_from) + '-' + str(id_to) + '.index.json')
+
+    def merge_index(self, fnames):
+        self.index = {}
+        for fname in fnames:
+            with open(os.path.join(self.output_dir, fname), 'r', encoding='utf8') as f:
+                partial_index = json.load(f)
+                for wid, data in partial_index.items()
+                    # put wid into self.index
+                    # merge doc_length and postings
+        # update doc_length and sort postings in the end
+            
 
 if __name__ == '__main__':
+    doc_id_from = sys.argv[1]
+    doc_id_to = sys.argv[2]
+    #indexer = Indexer(
+    #    'C:\\Users\\Jun-Wei\\Desktop\\webpages_parsed',
+    #    'C:\\Users\\Jun-Wei\\Desktop\\webpages_parsed\\index',
+    #    'C:\\Users\\Jun-Wei\\Desktop\\webpages_raw\\bookkeeping.json',
+    #    'body')
     indexer = Indexer(
-        'C:\\Users\\Jun-Wei\\Desktop\\webpages_parsed',
-        'C:\\Users\\Jun-Wei\\Desktop\\webpages_parsed\\index',
-        'C:\\Users\\Jun-Wei\\Desktop\\webpages_raw\\bookkeeping.json',
+        '/home/junwel1/ir-proj3-data/webpages_parsed', 
+        '/home/junwel1/ir-proj3-data/webpages_parsed/index', 
+        '/home/junwel1/ir-proj3-data/WEBPAGES_RAW/bookkeeping.json',
         'body')
-    indexer.build_index()
+    indexer.build_index(doc_id_from, doc_id_to)
