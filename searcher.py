@@ -37,16 +37,17 @@ class Searcher:
         self.dict = corpora.Dictionary.load(os.path.join(self.output_dir, self.index_type + '.dict'))
         self.id2token = self.load_json(self.index_type + '.dict.json')
         # model
+
         if self.model_type == 'tfidf':
             self.model = models.TfidfModel.load(os.path.join(self.output_dir, self.index_type + '.corpus.tfidf.model'))
             corpus_name = self.index_type + '.corpus.tfidf'
         elif self.model_type == 'lsi':
             self.model = models.LsiModel.load(os.path.join(self.output_dir, self.index_type + '.corpus.lsi.model'))
-            print(len(self.model.print_topics()))
+            #print(len(self.model.print_topics()))
             corpus_name = self.index_type + '.corpus.lsi'
         # corpus
         self.corpus = corpora.MmCorpus(os.path.join(self.output_dir, corpus_name))
-        print('sim index..')
+        #print('sim index..')
         # sim_index
         if os.path.exists(os.path.join(self.output_dir, self.index_type + '.sim_index')):
             self.sim_index = similarities.MatrixSimilarity.load(os.path.join(self.output_dir, self.index_type + '.sim_index'))
@@ -54,20 +55,20 @@ class Searcher:
             self.sim_index = similarities.MatrixSimilarity(self.corpus)
             self.sim_index.save(os.path.join(self.output_dir, self.index_type + '.sim_index'))
 
-    def query(self, query):
-        t_list = Tokenizer.tokenize(query)
-        print('t_list:', t_list)
+    def query(self, query_str):
+        t_list = Tokenizer.tokenize(query_str)
+        #print('t_list:', t_list)
         vec_bow = self.dict.doc2bow(t_list)
         vec_transformed = self.model[vec_bow]
-        print(vec_transformed)
+        #print(vec_transformed)
         sims = self.sim_index[vec_transformed]
         sims = sorted(enumerate(sims), key=lambda item: -item[1])
-        print(len(sims))
-        print(sims[:10])
-        for did, sim in sims[:10]:
-            dkey = self.index_to_key[str(did)]
-            with open(os.path.join(self.doc_dir, dkey.split('/')[0], dkey.split('/')[1] + '.' + self.index_type), 'r') as f:
-                print(did, dkey, f.readlines(), sim)
+        results = [e for e in sims[:20] if e[1] > 0.5]
+        #for did, sim in results:
+        #    dkey = self.index_to_key[str(did)]
+        #    with open(os.path.join(self.doc_dir, dkey.split('/')[0], dkey.split('/')[1] + '.' + self.index_type), 'r') as f:
+        #        print(did, dkey, f.readlines(), sim)
+        return results
 
     def load_json(self, fname):
         with open(os.path.join(self.output_dir, fname), 'r') as f:
@@ -79,10 +80,10 @@ if __name__ == '__main__':
         'C:\\Users\\Jun-Wei\\Desktop\\webpages_parsed\\index',
         'C:\\Users\\Jun-Wei\\Desktop\\webpages_raw\\bookkeeping.json',
         'body', 'lsi')
-    searcher_body.query('Machine@learning')
+    searcher_body.query('Crista Lopes')
     searcher_title = Searcher(
         'C:\\Users\\Jun-Wei\\Desktop\\webpages_parsed',
         'C:\\Users\\Jun-Wei\\Desktop\\webpages_parsed\\index',
         'C:\\Users\\Jun-Wei\\Desktop\\webpages_raw\\bookkeeping.json',
         'title', 'lsi')
-    searcher_title.query('Machine@learning')
+    searcher_title.query('Crista Lopes')
