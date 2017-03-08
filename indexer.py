@@ -8,6 +8,7 @@ Module docstring
 
 import json
 import os
+import re
 import sys
 from gensim import corpora, models, similarities
 import util
@@ -65,6 +66,7 @@ class Indexer:
         for k, v in self.dict.token2id.items():
             self.id2token[str(v)] = k
         assert len(self.id2token) == len(self.dict.token2id)
+        self.save_json(self.id2token, self.index_type + '.dict.json')
 
     def load_doc_with_index(self):
         keys = [self.index_to_key[str(i)] for i in range(len(self.index_to_key))]
@@ -94,6 +96,19 @@ class Indexer:
             #input()
             corpora.MmCorpus.serialize(os.path.join(self.output_dir, fname), tfidf_docs)
             return tfidf_docs
+
+    def build_lsi(self):
+        if os.path.exists(os.path.join(self.output_dir, self.index_type + '.corpus.lsi')):
+            return corpora.MmCorpus(os.path.join(self.output_dir, self.index_type + '.corpus.lsi'))
+        else:
+            tfidf_corpus = self.build_tfidf(self.index_type + '.corpus.tfidf')
+            if os.path.exists(os.path.join(self.output_dir, self.index_type + '.corpus.lsi.model')):
+                lsi = models.LsiModel.load(os.path.join(self.output_dir, self.index_type + '.corpus.lsi.model'))
+            else:
+                lsi = models.LsiModel(tfidf_corpus, id2word=self.dict, num_topics=200)
+                lsi.save(os.path.join(self.output_dir, self.index_type + '.corpus.lsi.model'))
+            corpus_lsi = lsi[tfidf_corpus]
+            corpora.MmCorpus.serialize(os.path.join(self.output_dir, self.index_type + '.corpus.lsi'), corpus_lsi)
 
     def build_index(self, id_from, id_to):
         print('loading doc')
@@ -151,28 +166,46 @@ class Indexer:
             self.index[wid]['doc_length'] = str(len(self.index[wid]['postings']))
         self.save_json(self.index, self.index_type + '.' + str(id_from) + '-' + str(id_to) + '.index.json')
 
-    def merge_index(self, fnames):
+    # We dont have to merge index files, instead we can look up all of them sequentially in querying time
+    def merge_index(self):
+        pass
+        '''
         self.index = {}
-        for fname in fnames:
+        pattern = self.index_type + '\..*\.index.json'
+        index_files = [f for f in os.listdir(self.output_dir) if re.match(pattern, f)]
+        index_files = sorted(index_files, key=lambda x:int(x.split('.')[1].split('-')[0]))
+        for fname in index_files:
+            print('merging', fname)
             with open(os.path.join(self.output_dir, fname), 'r', encoding='utf8') as f:
                 partial_index = json.load(f)
-                for wid, data in partial_index.items()
-                    # put wid into self.index
-                    # merge doc_length and postings
-        # update doc_length and sort postings in the end
+                for wid, data in partial_index.items():
+                    if wid not in self.index.keys():
+                        self.index[wid] = data
+                    else:
+                        self.index[wid]['postings'] += data['postings']
+                        self.index[wid]['doc_length'] = str(int(self.index[wid]['doc_length']) + int(data['doc_length']))
+        # this step is unnecessary if we merge indices ascendingly
+        print('sorting')
+        for _, v in self.index.items():
+            assert v['doc_length'] == str(len(v['postings']))
+            v['postings'] = sorted(v['postings'], key=lambda x:int(x[0]))
+        print('write to file')
+        self.save_json(self.index, self.index_type + '.index.json')
+        '''
             
 
 if __name__ == '__main__':
-    doc_id_from = sys.argv[1]
-    doc_id_to = sys.argv[2]
-    #indexer = Indexer(
-    #    'C:\\Users\\Jun-Wei\\Desktop\\webpages_parsed',
-    #    'C:\\Users\\Jun-Wei\\Desktop\\webpages_parsed\\index',
-    #    'C:\\Users\\Jun-Wei\\Desktop\\webpages_raw\\bookkeeping.json',
-    #    'body')
+    #doc_id_from = sys.argv[1]
+    #doc_id_to = sys.argv[2]
     indexer = Indexer(
-        '/home/junwel1/ir-proj3-data/webpages_parsed', 
-        '/home/junwel1/ir-proj3-data/webpages_parsed/index', 
-        '/home/junwel1/ir-proj3-data/WEBPAGES_RAW/bookkeeping.json',
-        'body')
-    indexer.build_index(doc_id_from, doc_id_to)
+        'C:\\Users\\Jun-Wei\\Desktop\\webpages_parsed',
+        'C:\\Users\\Jun-Wei\\Desktop\\webpages_parsed\\index',
+        'C:\\Users\\Jun-Wei\\Desktop\\webpages_raw\\bookkeeping.json',
+        'title')
+    indexer.build_lsi()
+    #indexer = Indexer(
+    #    '/home/junwel1/ir-proj3-data/webpages_parsed',
+    #    '/home/junwel1/ir-proj3-data/webpages_parsed/index',
+    #    '/home/junwel1/ir-proj3-data/WEBPAGES_RAW/bookkeeping.json',
+    #    'body')
+    #indexer.build_index(doc_id_from, doc_id_to)
