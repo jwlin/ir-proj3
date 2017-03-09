@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Search Engine</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Le styles -->
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <style>
+        body {
+            padding-top: 60px;
+            /* 60px to make the container go all the way to the bottom of the topbar */
+        }
+    </style>
+    <link href="bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+
+</head>
+<script type="text/javascript">
+    request = new XMLHttpRequest();
+    function search(){
+        document.getElementById("show").innerHTML = "Loading...";
+        var url = "callPython.php";
+        request.open("POST",url,true);
+        request.onreadystatechange= updatePage;
+        request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+        request.send("inputValue="+document.getElementById('inputValue').value);
+    }
+
+
+    function updatePage(){
+        if(request.readyState == 4){
+            if(request.status == 200){
+                var response = request.responseText;
+                var txt = '{ "sites" : ' + response + '}';
+                var jsonObj = JSON.parse(txt);
+                var tag = "";
+
+                for(var i=0;i<jsonObj.sites.length;i++){
+                    tag += '<div>'
+                    tag += '<h2 id="title">'+ jsonObj.sites[i].title +'</h2>';
+                    tag += '<a id="link1" href='+ jsonObj.sites[i].link +'>'+jsonObj.sites[i].link+'</a>';
+                    tag += '<p class="lead" id="content2">'+ jsonObj.sites[i].content +'</p>';
+                    tag += '</div>'
+                }
+
+                document.getElementById("show").innerHTML = tag;
+            }
+        }
+    }
+
+</script>
+<body>
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container-fluid">
+            <button type="button" class="btn btn-navbar collapsed" data-toggle="collapse" data-target=".nav-collapse"> <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+
+            </button>
+            <a class="brand" href="#">Search Engine</a>
+            <div class="nav-collapse collapse" style="height: 0px;">
+            </div>
+            <!--/.nav-collapse -->
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <table align="center">
+        <tbody>
+
+        <tr>
+            <th class="">
+                <input type="text" class="input-xxlarge" id="inputValue">
+                <button class="btn btn-large btn-primary" onclick="search()">Search</button>
+            </th>
+        </tr>
+        <tr>
+            <td class="">
+                <div class="text-left" id="show"></div>
+        </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<!-- /container -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="http://code.jquery.com/jquery.js">
+</script>
+<script src="bootstrap/js/bootstrap.min.js"></script>
+</body>
+
+</html>
+
