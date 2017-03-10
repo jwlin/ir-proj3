@@ -24,25 +24,32 @@ class Interface:
             'title', 'tfidf')
 
     def query(self, query_str):
-        did_to_score = {}
+        dkey_to_score = {}
         body_list = self.searcher_body.query(query_str)
         #print(len(body_list), body_list)
-        self.accumulate(body_list, did_to_score, self.searcher_body.index_to_key)
+        self.accumulate(body_list, dkey_to_score)
         title_list = self.searcher_title.query(query_str)
         #print(len(title_list), title_list)
-        self.accumulate(title_list, did_to_score, self.searcher_title.index_to_key)
-        scores = [(e[0], e[1]) for e in did_to_score.items()]
-        scores = sorted(scores, key=lambda x: x[1], reverse=True)
+        self.accumulate(title_list, dkey_to_score)
+        scores = [v for k, v in dkey_to_score.items()]
+        scores = sorted(scores, key=lambda x: x['score'], reverse=True)
         #print(len(scores), scores)
-        return [self.searcher_body.book_data[key] for key, _ in scores[:5]]
+        return scores[:5]
 
-    def accumulate(self, rank_list, score_map, did_to_dkey, weight=1.0):
-        for did, sim in rank_list:
-            dkey = did_to_dkey[str(did)]
+    def accumulate(self, rank_list, score_map, weight=1.0):
+        # each element is a tuple of (dkey, sim, url, title, content)
+        for e in rank_list:
+            dkey = e[0]
+            sim = e[1]
             if dkey in score_map.keys():
-                score_map[dkey] += weight * sim
+                score_map[dkey]['score'] += weight * sim
             else:
-                score_map[dkey] = weight * sim
+                score_map[dkey] = {
+                    'title': e[3],
+                    'link': e[2],
+                    'score': weight * sim,
+                    'content': e[4]
+                }
 
 
 if __name__ == '__main__':

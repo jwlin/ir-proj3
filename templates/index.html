@@ -8,21 +8,21 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <!-- Le styles -->
-    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href={{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }} rel="stylesheet" type="text/css" />
     <style>
         body {
             padding-top: 60px;
             /* 60px to make the container go all the way to the bottom of the topbar */
         }
     </style>
-    <link href="bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+    <link href={{ url_for('static', filename='bootstrap/css/bootstrap-responsive.min.css') }} rel="stylesheet">
 
 </head>
 <script type="text/javascript">
     request = new XMLHttpRequest();
     function search(){
         document.getElementById("show").innerHTML = "Loading...";
-        var url = "callPython.php";
+        var url = "/query";
         request.open("POST",url,true);
         request.onreadystatechange= updatePage;
         request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
@@ -31,7 +31,7 @@
 
 
     function updatePage(){
-        if(request.readyState == 4){
+		if(request.readyState == 4){
             if(request.status == 200){
                 var response = request.responseText;
                 var txt = '{ "sites" : ' + response + '}';
@@ -90,7 +90,7 @@
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="http://code.jquery.com/jquery.js">
 </script>
-<script src="bootstrap/js/bootstrap.min.js"></script>
+<script src={{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}></script>
 </body>
 
 </html>
