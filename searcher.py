@@ -71,6 +71,9 @@ class Searcher:
         # retrieve info
         results = []
         for did, sim in top20:
+            # normalize sim scores
+            denominator = top20[0][1]
+            sim /= denominator
             dkey = self.index_to_key[str(did)]
             url = self.book_data[dkey]
             title = ''
@@ -95,18 +98,24 @@ class Searcher:
                     i_start = i-20 if i-20 > -1 else 0
                     i_end = i+20 if i+20 < len(text) else len(text)-1
                     return ' '.join(text[i_start:i_end])
-        return ''
+        return ''.join(t_list[:40])
 
 if __name__ == '__main__':
     searcher_body = Searcher(
-        'C:\\Users\\Jun-Wei\\Desktop\\webpages_parsed',
-        'C:\\Users\\Jun-Wei\\Desktop\\webpages_parsed\\index',
+        'C:\\Users\\Jun-Wei\\Desktop\\webpages_parsed_2',
+        'C:\\Users\\Jun-Wei\\Desktop\\webpages_parsed_2\\index',
         'C:\\Users\\Jun-Wei\\Desktop\\webpages_raw\\bookkeeping.json',
         'body', 'lsi')
-    searcher_body.query('Crista Lopes')
+    print(searcher_body.query('Crista Lopes'))
     searcher_title = Searcher(
-        'C:\\Users\\Jun-Wei\\Desktop\\webpages_parsed',
-        'C:\\Users\\Jun-Wei\\Desktop\\webpages_parsed\\index',
+        'C:\\Users\\Jun-Wei\\Desktop\\webpages_parsed_2',
+        'C:\\Users\\Jun-Wei\\Desktop\\webpages_parsed_2\\index',
         'C:\\Users\\Jun-Wei\\Desktop\\webpages_raw\\bookkeeping.json',
-        'title', 'lsi')
-    searcher_title.query('Crista Lopes')
+        'title', 'tfidf')
+    print(searcher_title.query('Crista Lopes'))
+    searcher_anchor = Searcher(
+        'C:\\Users\\Jun-Wei\\Desktop\\webpages_parsed_2',
+        'C:\\Users\\Jun-Wei\\Desktop\\webpages_parsed_2\\index',
+        'C:\\Users\\Jun-Wei\\Desktop\\webpages_raw\\bookkeeping.json',
+        'anchor', 'tfidf')
+

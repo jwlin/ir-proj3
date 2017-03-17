@@ -101,6 +101,7 @@ class Indexer:
         if os.path.exists(os.path.join(self.output_dir, self.index_type + '.corpus.lsi')):
             return corpora.MmCorpus(os.path.join(self.output_dir, self.index_type + '.corpus.lsi'))
         else:
+            print('building lsi corpus')
             tfidf_corpus = self.build_tfidf(self.index_type + '.corpus.tfidf')
             if os.path.exists(os.path.join(self.output_dir, self.index_type + '.corpus.lsi.model')):
                 lsi = models.LsiModel.load(os.path.join(self.output_dir, self.index_type + '.corpus.lsi.model'))
@@ -118,6 +119,8 @@ class Indexer:
             self.load_doc()
         print('building tfidf doc')
         tfidf_corpus = self.build_tfidf(self.index_type + '.corpus.tfidf')
+        '''
+        # build index files for phase 1
         print('indexing')
         token2id = self.dict.token2id
         for doc_id in range(len(self.docs)):
@@ -165,6 +168,7 @@ class Indexer:
         for wid in self.index.keys():
             self.index[wid]['doc_length'] = str(len(self.index[wid]['postings']))
         self.save_json(self.index, self.index_type + '.' + str(id_from) + '-' + str(id_to) + '.index.json')
+        '''
 
     # We dont have to merge index files, instead we can look up all of them sequentially in querying time
     def merge_index(self):
@@ -198,10 +202,11 @@ if __name__ == '__main__':
     #doc_id_from = sys.argv[1]
     #doc_id_to = sys.argv[2]
     indexer = Indexer(
-        'C:\\Users\\Jun-Wei\\Desktop\\webpages_parsed',
-        'C:\\Users\\Jun-Wei\\Desktop\\webpages_parsed\\index',
+        'C:\\Users\\Jun-Wei\\Desktop\\webpages_parsed_2',
+        'C:\\Users\\Jun-Wei\\Desktop\\webpages_parsed_2\\index',
         'C:\\Users\\Jun-Wei\\Desktop\\webpages_raw\\bookkeeping.json',
-        'title')
+        'anchor')
+    indexer.build_index(0, 74)
     indexer.build_lsi()
     #indexer = Indexer(
     #    '/home/junwel1/ir-proj3-data/webpages_parsed',

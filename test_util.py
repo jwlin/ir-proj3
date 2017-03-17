@@ -3,6 +3,7 @@
 
 import unittest
 from util import merge_path, remove_trailing_junk, is_repeated_path, merge_href
+from tokenizer import Tokenizer
 
 
 class TestUtil(unittest.TestCase):
@@ -55,6 +56,7 @@ class TestUtil(unittest.TestCase):
         for u in valid_urls:
             self.assertFalse(is_repeated_path(u))
 
+    @unittest.skip('skip')
     def test_bs4(self):
         from bs4 import BeautifulSoup
         import os
@@ -94,6 +96,22 @@ class TestUtil(unittest.TestCase):
                     print(txt)
                     print(Tokenizer.tokenize(txt))
                 '''
+
+    @unittest.skip('skip')
+    def test_stopwords(self):
+        print(Tokenizer.get_stopwords())
+        print(Tokenizer.get_synonyms())
+        t_list = ['software', 'computer', 'engineering', 'informatics']
+        token_list = ['software']
+        self.assertTrue(Tokenizer.contain(t_list, token_list))
+        token_list = ['software', 'engineering']
+        self.assertFalse(Tokenizer.contain(t_list, token_list))
+        token_list = ['software', 'computer']
+        self.assertTrue(Tokenizer.contain(t_list, token_list))
+        text = "cristina's software engineering class"
+        print(Tokenizer.tokenize(text))
+        text = "I love ai and machine learning, i know what's rest"
+        print(Tokenizer.tokenize(text))
 
 
 if __name__ == '__main__':

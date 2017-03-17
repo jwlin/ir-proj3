@@ -1,0 +1,9 @@
+crista,cristina
+cs,computer science
+se,software engineering
+ml,machine learning
+ai,artificial intelligence
+ir,information retrieval
+rest,representational state transfer
+uci,university california irvine
+ics,information computer science

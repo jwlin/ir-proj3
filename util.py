@@ -65,9 +65,9 @@ def is_valid(url):
 
 
 def merge_href(orig_url, href):
-    'orig_url:', orig_url
+    #print('orig_url:', orig_url)
     parsed = urlparse(orig_url)
-    print('parsed', parsed)
+    #print('parsed', parsed)
 
     # path: 'abc.ics.uci.edu/b/c.html' -> '/b/'
     path = parsed.path.split('/')[:-1][1:]

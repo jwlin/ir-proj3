@@ -1,0 +1,72 @@
+{
+  "mondego": [
+    "mondego.ics.uci.edu/",
+    "www.ics.uci.edu/~lopes",
+    "www.ics.uci.edu/~lopes/datasets/SDS_source-repo-18k.html",
+    "www.ics.uci.edu/~lopes/datasets/",
+    "mondego.ics.uci.edu/projects/clonedetection/tool"
+  ],
+  "machine learning": [
+    "archive.ics.uci.edu/ml",
+    "cml.ics.uci.edu",
+    "mlearn.ics.uci.edu",
+    "mlearn.ics.uci.edu/MLRepository.html",
+    "archive.ics.uci.edu/ml/datasets.html"
+  ],
+  "software engineering": [
+    "www.ics.uci.edu/prospective/en/degrees/software-engineering/",
+    "www.ics.uci.edu/ugrad/degrees/degree_se.php",
+    "www.ics.uci.edu/~ziv/ooad/intro_to_se/tsld008.htm",
+    "www.ics.uci.edu/~emilyo/SimSE/se_rules.html",
+    "www.ics.uci.edu/faculty/area/area_software.php"
+  ],
+  "security": [
+    "www.ics.uci.edu/faculty/area/area_security.php",
+    "sprout.ics.uci.edu",
+    "www.ics.uci.edu/~gts",
+    "sconce.ics.uci.edu",
+    "www.ics.uci.edu/computing/linux/security.php"
+  ],
+  "student affairs": [
+    "www.ics.uci.edu/about/search/search_sao.php",
+    "www.ics.uci.edu/prospective/en/contact/student-affairs",
+    "www.ics.uci.edu/ugrad/",
+    "www.ics.uci.edu/grad/sao/index.php",
+    "www.ics.uci.edu/grad/"
+  ],
+  "information retrieval": [
+    "www.ics.uci.edu/~lopes/teaching/cs221W15/",
+    "www.ics.uci.edu/~lopes/teaching/cs221W13/",
+    "www.ics.uci.edu/~djp3/classes/2014_01_INF141/calendar.html",
+    "www.ics.uci.edu/~kay/courses/i141/refs.html",
+    "www.ics.uci.edu/~kay/courses/i141/w15.html"
+  ],
+  "computer games": [
+    "cgvw.ics.uci.edu",
+    "www.ics.uci.edu/~wscacchi/",
+    "cgvw.ics.uci.edu/oc-weekly-game-on/",
+    "cgvw.ics.uci.edu/tag/premier-award/",
+    "cgvw.ics.uci.edu/tag/latimes/"
+  ],
+  "REST": [
+    "www.ics.uci.edu/~kay/courses/141/schemenotes.html",
+    "www.ics.uci.edu/~kay/courses/141/restaurants.txt",
+    "www.ics.uci.edu/~rohit/",
+    "www.ics.uci.edu/~kay/courses/141/bst.txt",
+    "www.ics.uci.edu/~kay/courses/141/hw/hw2.html"
+  ],
+  "Crista Lopes": [
+    "www.ics.uci.edu/~lopes/",
+    "mondego.ics.uci.edu/",
+    "www.ics.uci.edu/~lopes/aop/aop-pics.html",
+    "www.ics.uci.edu/~hsajnani/",
+    "www.ics.uci.edu/~lopes/aop/aop.html"
+  ],
+  "graduate courses": [
+    "www.ics.uci.edu/prospective/en/degrees/software-engineering/",
+    "mhcid.ics.uci.edu/",
+    "cml.ics.uci.edu/courses/",
+    "www.ics.uci.edu/prospective/en/degrees/computer-game-science/",
+    "www.ics.uci.edu/~mmazmani/Site/Courses.html"
+  ]
+}
